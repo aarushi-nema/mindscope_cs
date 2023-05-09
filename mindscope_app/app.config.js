@@ -1,4 +1,6 @@
-{
+import 'dotenv/config'
+
+export default {
   "expo": {
     "name": "mindscope_app",
     "slug": "mindscope_app",
@@ -25,6 +27,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      firebaseApiKey: process.env.FIREBASE_API_KEY
     }
   }
 }
