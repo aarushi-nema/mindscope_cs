@@ -28,8 +28,5 @@ export default {
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      firebaseApiKey: process.env.FIREBASE_API_KEY
-    }
   }
 }

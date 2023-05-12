@@ -6,39 +6,76 @@ import images from '../../constants/images'
 import { COLORS, FONT, SHADOWS } from '../../constants/theme'
 
 const Login = (props) => {
-  const [email,setEmail] = useState('')
-  const [password,setPassword] = useState('')
-  // const handleSignUp = () => {
-  //   auth.createUserWithEmail
-  // }
+  const [fdata, setFdata] = useState({
+    email: '',
+    password: ''
+  })
+  const [errormsg, setErrormsg] = useState(null)
+
+  const sendToBackend = () => {
+    // console.log(fdata);
+    if (fdata.email == '' || fdata.password == '') {
+      setErrormsg('All fields are required');
+      return;
+    }
+    else {
+      // console.log('http://' + process.env.IP + ':3000/signup')
+      fetch('http://192.168.0.103:3000/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(fdata)
+      }).then(res=>res.json()).then(
+        data => {
+          // console.log(data)
+          if(data.error) {
+            setErrormsg(data.error);
+          }
+          else{
+            alert('Login Successfully')
+            props.navigation.navigate("Home")
+          }
+        }
+      )
+    }
+  }
+
+
   return (
     <View style={styles.container}>
-      <TransparentButton text="Back" handlePress={() => props.navigation.navigate("SplashScreen")}></TransparentButton>
+      <View style={styles.backButton}>
+        <TransparentButton text="Back" handlePress={() => props.navigation.navigate("SplashScreen")}></TransparentButton>
+      </View>
+  
       <View style={styles.login_header}>
         <Image style={styles.logo_login} source={images.logo}></Image>
         <Text style={styles.title}>MindScope</Text>
       </View>
       <KeyboardAvoidingView  style={styles.formContainer} behaviour="padding">
       <Text style={styles.form_header}>Login</Text>
+      {
+        errormsg ? <Text style={styles.errormsg}>{errormsg}</Text> : null
+      }
       <View
        style={styles.inputContainer}
        >
         <TextInput 
           placeholder='Email' 
-          value={email} 
-          onChangeText={text => setEmail(text)} 
+          //value={email} 
+          onChangeText={(text) => setFdata({...fdata, email:text})}  
           style={styles.input}
           />
         <TextInput 
           placeholder='Password'
-          value={password}  
-          onChangeText={text=>setPassword(text)} 
+          //value={password}  
+          onChangeText={(text) => setFdata({...fdata, password:text})} 
           style={styles.input}
           secureTextEntry/>
       </View>
 
       <View style={styles.buttonContainer}> 
-        <OrangeButton text="Login"/>
+        <OrangeButton text="Login" handlePress={() => {sendToBackend()}}/>
       </View>
 
       <View style={styles.signupConatiner}>
@@ -55,6 +92,11 @@ const styles = StyleSheet.create({
   container: {
     flex:1,
     backgroundColor: COLORS.white,
+  },
+  backButton: {
+    marginTop: '18%',
+    alignSelf: 'flex-start',
+    marginLeft: 45,
   },
   login_header: {
     flexDirection: 'row',
@@ -117,6 +159,10 @@ const styles = StyleSheet.create({
   },
   signup_prompt: {
     marginRight:5,
+    fontFamily: FONT.Oxygen
+  },
+  errormsg: {
+    color: 'red',
     fontFamily: FONT.Oxygen
   }
 })

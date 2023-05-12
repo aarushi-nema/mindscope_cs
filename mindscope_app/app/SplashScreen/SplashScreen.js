@@ -18,7 +18,7 @@ const SplashScreen = (props) => {
                     <OrangeButton text="Login" handlePress={() => props.navigation.navigate("Login")}/>
                 </View>
                 <View style={styles.buttonContainer}> 
-                    <OrangeButton text="Sign Up" handlePress={() => props.navigation.navigate("SignUp")}/>
+                    <OrangeButton text="Sign Up" handlePress={() => props.navigation.navigate("Signup")}/>
                 </View>
         </View>
     )

@@ -7,8 +7,9 @@ import images from '../../constants/images'
 import { COLORS, FONT, SHADOWS } from '../../constants/theme'
 import DatePicker from 'react-native-modern-datepicker'; 
 import { getToday, getFormatedDate } from 'react-native-modern-datepicker'
+import {IP} from "@env"
 
-const Login = (props) => {
+const Signup = (props) => {
   const [selectedItem, setSelectedItem] = useState('Gender');
   const [openDate, setOpenDate] = useState(true);
   const [date, setDate] = useState(false);
@@ -22,6 +23,9 @@ const Login = (props) => {
   const today = new Date();
   const startDate = getFormatedDate(today.setDate(today.getDate()+1), 'YYYY/MM/DD');
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
   function handleDOBButton(){
     setOpenDate(!openDate)
   }
@@ -29,48 +33,119 @@ const Login = (props) => {
   function handleDateChange(propDate){
     setDate(propDate)
   }
-  return (
 
+  const [fdata, setFdata] = useState({
+    name: '',
+    email: '',
+    password: '',
+    cpassword: '',
+    dob: '',
+    gender: ''
+  });
+
+  const [errormsg, setErrormsg] = useState(null);
+
+  const sendToBackend = () => {
+    //console.log(fdata)
+    if (fdata.name == '' || fdata.email == '' || fdata.password == '' || fdata.cpassword == '' ) {
+          setErrormsg('All fields are required');
+          return;
+        }
+    else {
+      if(fdata.password != fdata.cpassword){
+        setErrormsg('Passwords do not match');
+        return;
+      } 
+      else {
+        fetch(`http://${IP}:3000/signup`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(fdata)
+        }).then(res=>res.json()).then(
+          data=>{
+            // console.log(data);
+            if(data.error) {
+              setErrormsg(data.error);
+            }
+            else{
+              alert('Account Created Successfully')
+              props.navigation.navigate("Login")
+            }
+          }
+        )
+      }
+    }
+
+  }
+
+  return (
     <View style={styles.container}>
+      <View style={styles.backButton}>
+        <TransparentButton text="Back" handlePress={() => props.navigation.navigate("SplashScreen")}></TransparentButton>
+      </View>
       <View style={styles.login_header}>
         <Image style={styles.logo_login} source={images.logo}></Image>
         <Text style={styles.title}>MindScope</Text>
       </View>
       <KeyboardAvoidingView  style={styles.formContainer} behaviour="padding">
       <Text style={styles.form_header}>Sign Up</Text>
+      {
+        errormsg ? <Text style={styles.errormsg}>{errormsg}</Text> : null
+      }
       <View
        style={styles.inputContainer}
        >
         <TextInput 
           placeholder='Full Name' 
-          // value={} 
-          // onChangeText={()=>{}} 
+          //value={} 
+          onChangeText={(text)=> setFdata({...fdata, name:text})} 
           style={styles.input}
+          onPressIn={()=> setErrormsg(null)}
           />
-          <TextInput 
+          {/* <TextInput 
           placeholder='UserName' 
           // value={} 
           // onChangeText={()=>{}} 
           style={styles.input}
-          />
+          /> */}
         <TextInput 
           placeholder='Email' 
-          // value={} 
-          // onChangeText={()=>{}} 
+          //value={email} 
+          onChangeText={(text) => setFdata({...fdata, email:text})} 
           style={styles.input}
+          onPressIn={()=> setErrormsg(null)}
           />
         <TextInput 
           placeholder='Password' 
-          // onChangeText={()=>{}} 
-          // value={} 
+          //value={password} 
+          onChangeText={(text) => setFdata({...fdata, password:text})} 
           style={styles.input}
+          onPressIn={()=> setErrormsg(null)}
           secureTextEntry/>
           <TextInput 
+          placeholder='Confirm Password' 
+          //value={password} 
+          onChangeText={(text) => setFdata({...fdata, cpassword:text})} 
+          style={styles.input}
+          onPressIn={()=> setErrormsg(null)}
+          secureTextEntry/>
+          {/* <TextInput 
+          placeholder='Date of Birth YYYY/MM/DD' 
+          //value={password} 
+          onChangeText={(text) => setFdata({...fdata, dob:text})} 
+          onPressIn={()=> setErrormsg(null)}
+          style={styles.input}
+          />
+          <TextInput 
           placeholder='Gender (F/M/Others)' 
-          // onChangeText={()=>{}} 
+          onChangeText={(text)=> setFdata({...fdata, gender:text})} 
+          onPressIn={()=> setErrormsg(null)}
           // value={} 
           style={styles.input}
-          secureTextEntry/>
+          /> */}
+          {/* 
 
           <TouchableOpacity style={styles.dateButton} onPress={handleDOBButton}>
               <Text>Date of Birth</Text>
@@ -105,12 +180,12 @@ const Login = (props) => {
             // onChangeText={()=>{}} 
             // value={} 
             style={styles.input}
-            secureTextEntry/>
+            secureTextEntry/> */}
 
       </View>
 
       <View style={styles.buttonContainer}> 
-        <OrangeButton text="Sign Up"/>
+        <OrangeButton text="Sign Up" handlePress={() => {sendToBackend()}}/>
       </View>
 
       <View style={styles.signupConatiner}>
@@ -127,6 +202,11 @@ const styles = StyleSheet.create({
   container: {
     flex:1,
     backgroundColor: COLORS.white,
+  },
+  backButton: {
+    marginTop: '18%',
+    alignSelf: 'flex-start',
+    marginLeft: 45,
   },
   login_header: {
     flexDirection: 'row',
@@ -178,9 +258,6 @@ const styles = StyleSheet.create({
     width: '80%',
     ...SHADOWS.medium,
   },
-  buttonOutline: {
-
-  },
   signupConatiner: {
     flexDirection: 'row',
     marginTop: '5%',
@@ -211,8 +288,12 @@ const styles = StyleSheet.create({
     padding: 35,
     alignItems: 'center',
     ...SHADOWS.medium
+  },
+  errormsg: {
+    color: 'red',
+    fontFamily: FONT.Oxygen
   }
 })
 
-export default Login
+export default Signup
 

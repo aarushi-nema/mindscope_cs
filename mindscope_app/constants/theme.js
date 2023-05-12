@@ -1,12 +1,16 @@
 const COLORS = {
     crayola: '#FDA769',
-    white: '#fff'
+    white: '#fff',
+    green: '#ABC270',
+    grey: '#EFEFEF'
 }
 
 const FONT = {
     CrimsonPro: "CrimsonPro",
     Oxygen: "Oxygen",
-    Oxygen_Bold: "Oxygen-Bold"
+    Oxygen_Bold: "Oxygen-Bold",
+    CrimsonPro_Bold: "CrimsonPro-Bold",
+    CrimsonPro_SemiBold:"CrimsonPro-SemiBold"
   };
 
   const SHADOWS = {
@@ -32,4 +36,13 @@ const FONT = {
     },
   };
 
-export {COLORS, FONT, SHADOWS}
+  const SIZES = {
+    xSmall: 10,
+    small: 12,
+    medium: 16,
+    large: 20,
+    xLarge: 24,
+    xxLarge: 32,
+  };
+
+export {COLORS, FONT, SHADOWS, SIZES}
