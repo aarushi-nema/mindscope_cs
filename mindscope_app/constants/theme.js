@@ -2,7 +2,9 @@ const COLORS = {
     crayola: '#FDA769',
     white: '#fff',
     green: '#ABC270',
-    grey: '#EFEFEF'
+    light_green: '#bbc79b',
+    grey: '#EFEFEF',
+    black: '#000000'
 }
 
 const FONT = {

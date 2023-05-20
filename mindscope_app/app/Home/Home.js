@@ -48,7 +48,7 @@ const Home = (props) => {
       <View>
         <Text style={styles.Heading2}>Daily Notifications</Text>
         <View style={styles.buttonContainer}>
-          <NotificationButton text="Complete your daily journal"></NotificationButton>
+          <NotificationButton text="Complete your daily journal" handlePress={() =>props.navigation.navigate("Journal")}></NotificationButton>
         </View>
         <View style={styles.buttonContainer}>
           <NotificationButton text="Complete your daily questionnaire"></NotificationButton>
@@ -69,7 +69,7 @@ const Home = (props) => {
         <View style={styles.learningHeader}>
           <Text style={styles.Heading2}>ToolKits</Text>
           <View style={styles.exploreButtonConatiner}>
-            <ExploreButton text="Explore"></ExploreButton>
+            <ExploreButton text="Explore" handlePress={() => props.navigation.navigate("ToolKitExplore")}></ExploreButton>
           </View>
         </View>
 
@@ -120,5 +120,6 @@ const styles = StyleSheet.create({
   },
   toolkitsContainer: {
     marginTop: 20,
+    marginBottom: 60,
   }
 })

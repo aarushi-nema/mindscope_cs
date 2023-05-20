@@ -28,7 +28,6 @@ const styles = StyleSheet.create({
     elevation: 4,
     marginVertical: 8,
     width: 210,
-    marginBottom: 60,
     marginTop: 13,
     marginRight: 12
   },
