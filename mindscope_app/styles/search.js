@@ -14,10 +14,10 @@ const styles = StyleSheet.create({
   orangeButton: {
     backgroundColor: COLORS.crayola,
     width: '100%',
-    padding: 6,
+    padding: 4,
     textAlign: 'center',
     borderRadius: 10,
-    marginTop: 5,
+    
     fontFamily: FONT.Oxygen,
     fontSize: 15
   },

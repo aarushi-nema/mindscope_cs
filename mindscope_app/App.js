@@ -2,7 +2,9 @@ import { StyleSheet, Image } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts } from "expo-font";
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import React , {Component} from 'react'; 
+//import Drawer from 'react-native-drawer';
 
 //Screens
 import Login from './app/Login/Login';
@@ -14,10 +16,13 @@ import SideDrawer from './app/SideDrawer/SideDrawer';
 import UserProfile from './app/UserProfile/UserProfile';
 import JournalCollection from './app/JournalCollection/JournalCollection';
 import Journal from './app/Journal/Journal';
+import QuizPage from './app/QuizPage/QuizPage';
+import ArticlePage from './app/ArticlePage/ArticlePage';
 
 //Icons
 import menu from './assets/icons/menus.png';
-import homeIcon from './assets/icons/home.png'
+import homeIcon from './assets/icons/home.png';
+
 
 //Images
 import user_image from './assets/images/user_image.jpg'
@@ -60,9 +65,9 @@ export default function App({props}) {
             drawerLabelStyle: {
               color: COLORS.black
             },
-            // headerLeft: () => (
-            //   <HeaderButton iconUrl={menu} dimension='60%' />
-            // ),
+            headerLeft: () => (
+              <HeaderButton iconUrl={menu} dimension='60%' />
+            ),
             headerRight: () => (
               <HeaderButton iconUrl={user_image} dimension='100%' style={styles.header} handlePress={() => props.navigation.navigate("UserProfile")}/>
             ),
@@ -134,6 +139,34 @@ export default function App({props}) {
         <Drawer.Screen
           name="Journal"
           component={Journal}
+          navigationOptions={{
+            drawerIcon: (
+              <Image
+                style={{ width: 24, height: 24 }}
+                source={homeIcon}
+              />
+            ),
+          }}
+        />
+
+        {/* Quiz */}
+        <Drawer.Screen
+          name="Quiz"
+          component={QuizPage}
+          navigationOptions={{
+            drawerIcon: (
+              <Image
+                style={{ width: 24, height: 24 }}
+                source={homeIcon}
+              />
+            ),
+          }}
+        />
+
+        {/* Article Page */}
+        <Drawer.Screen
+          name="Article Page"
+          component={ArticlePage}
           navigationOptions={{
             drawerIcon: (
               <Image

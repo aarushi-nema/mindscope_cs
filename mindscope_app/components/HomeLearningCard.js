@@ -6,7 +6,7 @@ const HomeLearningCard = (props) => {
   return (
     <View style={styles.card}>
       <ImageBackground style={styles.image} source={props.image} opacity={0.5}>
-        <Text style={styles.category}>Article</Text>
+        <Text style={styles.category}>{props.type}</Text>
         <Text style={styles.title}>{props.title}</Text>
         <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={props.onPressButton}>
