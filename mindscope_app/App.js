@@ -18,6 +18,10 @@ import JournalCollection from './app/JournalCollection/JournalCollection';
 import Journal from './app/Journal/Journal';
 import QuizPage from './app/QuizPage/QuizPage';
 import ArticlePage from './app/ArticlePage/ArticlePage';
+import EditProfile from './app/EditProfile/EditProfile';
+import ToolKitStrategy from './app/ToolKitStrategy/ToolKitStrategy';
+import ArticlesExplore from './app/ArticlesExplore/ArticlesExplore';
+import LearningCollection from './app/LearningCollection/LearningCollection';
 
 //Icons
 import menu from './assets/icons/menus.png';
@@ -35,26 +39,9 @@ import HeaderButton from './components/HeaderButton';
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
-
-export default function App({props}) {
-  // const navigation = useNavigation();
-  const [fontsLoaded] = useFonts({
-    "CrimsonPro": require('./assets/fonts/CrimsonPro-Regular.ttf'),
-    "Oxygen": require('./assets/fonts/Oxygen-Regular.ttf'),
-    "Oxygen-Bold": require('./assets/fonts/Oxygen-Bold.ttf'),
-    "CrimsonPro-Bold": require('./assets/fonts/CrimsonPro-Bold.ttf'),
-    "CrimsonPro-SemiBold": require('./assets/fonts/CrimsonPro-SemiBold.ttf')
-  });
-
-  if(!fontsLoaded){
-    return undefined;
-  }
-
+// Drawer component
+const DrawerComponent = () => {
   return (
-    <NavigationContainer>
-      <Stack.Screen name="SplashScreen" component={SplashScreen} options={{headerShown:false}}/>
-      <Stack.Screen name="Signup" component={Signup} options={{headerShown:false}} />
-      <Stack.Screen name="Login" component={Login} options={{headerShown:false} }/>
       <Drawer.Navigator
           screenOptions={{
             drawerStyle: {
@@ -176,8 +163,94 @@ export default function App({props}) {
             ),
           }}
         />
+
+        {/* Edit Profile */}
+        <Drawer.Screen
+          name="Edit Profile"
+          component={EditProfile}
+          navigationOptions={{
+            drawerIcon: (
+              <Image
+                style={{ width: 24, height: 24 }}
+                source={homeIcon}
+              />
+            ),
+          }}
+        />
+
+        {/* ToolKit Strategy */}
+        <Drawer.Screen
+          name="ToolKit Strategy"
+          component={ToolKitStrategy}
+          navigationOptions={{
+            drawerIcon: (
+              <Image
+                style={{ width: 24, height: 24 }}
+                source={homeIcon}
+              />
+            ),
+          }}
+        />
+
+        {/* Article Explore */}
+        <Drawer.Screen
+          name="Article Explore"
+          component={ArticlesExplore}
+          navigationOptions={{
+            drawerIcon: (
+              <Image
+                style={{ width: 24, height: 24 }}
+                source={homeIcon}
+              />
+            ),
+          }}
+        />
+
+        {/* Learning Collection */}
+        <Drawer.Screen
+          name="Learning Collection"
+          component={LearningCollection}
+          navigationOptions={{
+            drawerIcon: (
+              <Image
+                style={{ width: 24, height: 24 }}
+                source={homeIcon}
+              />
+            ),
+          }}
+        />
         
       </Drawer.Navigator> 
+    
+  );
+}
+
+
+export default function App({props}) {
+  // const navigation = useNavigation();
+  const [fontsLoaded] = useFonts({
+    "CrimsonPro": require('./assets/fonts/CrimsonPro-Regular.ttf'),
+    "Oxygen": require('./assets/fonts/Oxygen-Regular.ttf'),
+    "Oxygen-Bold": require('./assets/fonts/Oxygen-Bold.ttf'),
+    "CrimsonPro-Bold": require('./assets/fonts/CrimsonPro-Bold.ttf'),
+    "CrimsonPro-SemiBold": require('./assets/fonts/CrimsonPro-SemiBold.ttf')
+  });
+
+  if(!fontsLoaded){
+    return undefined;
+  }
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        {/* Screens */}
+        <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+
+        {/* Drawer */}
+        <Stack.Screen name="Drawer" component={DrawerComponent} options={{ headerShown: false }} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

@@ -34,13 +34,12 @@ const Login = (props) => {
           }
           else{
             alert('Login Successfully')
-            props.navigation.navigate("Home")
+            props.navigation.navigate("Drawer")
           }
         }
       )
     }
   }
-
 
   return (
     <View style={styles.container}>

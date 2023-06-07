@@ -1,17 +1,17 @@
 import React from 'react';
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { FONT, COLORS, SHADOWS } from '../constants/theme';
 
 const HomeLearningCard = (props) => {
   return (
     <View style={styles.card}>
-      <ImageBackground style={styles.image} source={props.image} opacity={0.5}>
+      <ImageBackground style={styles.image} source={{ uri: props.image}} opacity={0.5}>
         <Text style={styles.category}>{props.type}</Text>
         <Text style={styles.title}>{props.title}</Text>
         <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={props.onPressButton}>
+            <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate("Article Page")}>
                 <Text style={styles.buttonText}>Read Now</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> 
         </View>
       </ImageBackground>
     </View>
