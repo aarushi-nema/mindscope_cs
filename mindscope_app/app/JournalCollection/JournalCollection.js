@@ -1,40 +1,64 @@
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image, FlatList } from 'react-native'
-import React, {useState} from 'react'
-import { COLORS, FONT, SIZES, SHADOWS } from '../../constants/theme'
+import React, {useEffect, useState} from 'react';
+import { COLORS, FONT, SIZES, SHADOWS } from '../../constants/theme';
+import axios from "axios";
 
 //icons
 import search from '../../assets/icons/search.png'
 import add from '../../assets/icons/add.png'
 
-
-const journalEntries = [
-  { id: '1', title: '12:00 pm', content: '20 May, 2023' },
-  { id: '2', title: '07:00 pm', content: '16 May, 2023' },
-  { id: '3', title: '11:00 am', content: '11 May, 2023' },
-  // Add more journal entries as needed
-];
+//components
+import JournalItem from '../../components/JournalItem'
 
 const JournalCollection = () => {
   const [selectedEntry, setSelectedEntry] = useState(null);
+  const [journal, setJournal] = useState([]);
+
+  useEffect (() => {
+    getJournals("U0002");
+  }, []);
+
+  const getJournals = async (userId) => {
+    try {
+      //console.log(`http://192.168.0.104:3000/userjournals?userId=${userId}`);
+      const response = await axios.get(`http://192.168.0.104:3000/userjournals?userId=${userId}`);
+      
+      if (response.data && response.data.resources) {
+        const resources = response.data.resources;
+        const extractedObjects = resources.map((resource) => {
+          const date = new Date(resource.timeStamp); 
+          const title = `${date.getHours()}:${date.getMinutes()}`;
+          return {
+            journalId: resource.journalId,
+            userId: resource.userId,
+            journalText: resource.journalText,
+            date: date.toLocaleDateString('en-US', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric'
+            }),
+            title: title
+          };
+        });
+        setJournal(extractedObjects);
+      } else {
+        console.log("No resources found in the response");
+      }
+    } catch (error) {
+      console.error("Error fetching journals", error);
+    }
+  };
+  
 
   const handleEntryPress = (entry) => {
     setSelectedEntry(entry);
   };
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => handleEntryPress(item)} style={styles.item}>
-      <View style={styles.entryFlexConatiner}>
-        <View style={styles.colorContainer}></View>
-        <View>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.content}>{item.content}</Text>
-        </View>
-        <View style={styles.clickInto}>
-          <Text>&gt;</Text>
-        </View>
-      </View>
-      
-    </TouchableOpacity>
+  const JournalSet = ({ item }) => (
+    <JournalItem
+    title={item.title}
+    content={item.date}
+    ></JournalItem>
   );
 
   const renderEntry = () => {
@@ -87,11 +111,14 @@ const JournalCollection = () => {
       <Text style={styles.Heading2}>Entries</Text>
 
       {/* Entries List */}
-      <FlatList
-        data={journalEntries}
+      <View>
+        <JournalSet item={journal}></JournalSet>
+      </View>
+      {/* <FlatList
+        data={journal}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
-      />
+      /> */}
       {/* {renderEntry()} */}
 
     </ScrollView>

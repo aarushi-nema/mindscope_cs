@@ -5,8 +5,8 @@ import { COLORS, FONT } from '../constants/theme'
 const LatestItem = (props) => {
   return (
     <View style={styles.container}>
-       <TouchableOpacity style={styles.latestItemContainer}>
-          <Image source={props.imageUrl} style={styles.latestImg}></Image>
+       <TouchableOpacity style={styles.latestItemContainer} onPress={() => props.navigation.navigate("Article Page", { data: props.contentObject })}>
+          <Image source={{ uri: props.imageUrl}} style={styles.latestImg}></Image>
           <View style={styles.latestText}>
             <Text style={styles.latestTitle}>{props.title}</Text>
             <Text style={styles.latestDate}>{props.date}</Text>

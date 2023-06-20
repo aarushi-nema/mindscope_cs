@@ -20,6 +20,7 @@
     "expo-router": "^1.5.3",
     "expo-status-bar": "~1.4.4",
     "firebase": "^8.4.1",
+    "moment": "^2.29.4",
     "react": "18.2.0",
     "react-native": "0.71.8",
     "react-native-chart-kit": "^6.12.0",
@@ -36,8 +37,11 @@
     "react-native-snap-carousel": "^3.9.1",
     "react-native-vector-icons": "^9.2.0",
     "react-native-version-check-expo": "^3.4.7",
+    "react-native-video": "^2.3.1",
+    "react-native-video-player": "^0.14.0",
     "react-native-web": "~0.18.10",
-    "victory-native": "^36.6.10"
+    "victory-native": "^36.6.10",
+    "expo-av": "~13.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

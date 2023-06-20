@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, Dimensions, FlatList  } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { COLORS, FONT, SHADOWS } from '../../constants/theme'
 import { BarChart } from 'react-native-chart-kit'
 import { ChartConfig } from 'react-native-chart-kit/dist/HelperTypes'
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { VictoryChart, VictoryGroup, VictoryBar, VictoryAxis, VictoryTheme, VictoryLine } from 'victory-native'
+import axios from "axios";
 
 //Images
 import user_image from '../../assets/images/user_image.jpg'
@@ -13,29 +14,6 @@ import user_image from '../../assets/images/user_image.jpg'
 import OrangeButton from '../../components/OrangeButton'
 
 const {width} = Dimensions.get('screen')
-
-const userBiasData = [
-  {bias: 'ImplicitBias', biasScore: 8},
-  {bias: 'ConfirmationBias', biasScore: 2},
-  {bias: 'HaloEffect', biasScore: 1},
-  {bias: 'Stereotyping', biasScore: 0},
-  {bias: 'AvailabilityHeuristic', biasScore: 7},
-  {bias: 'IngroupBias', biasScore: 4},
-  {bias: 'AnchoringBias', biasScore: 1},
-  {bias: 'BeautyBias', biasScore: 6},
-  {bias: 'AuthorityBias', biasScore: 9},
-  {bias: 'AuthorityBias', biasScore: 0},
-]
-
-const userStrengthData = [
-  { id: '1', bias: 'Gender Bias' },
-  { id: '2', bias: 'Confirmation Bias' },
-];
-
-const userWeaknessData = [
-  { id: '1', bias: 'Beauty Bias' },
-  { id: '2', bias: 'Halo Effect' },
-];
 
 const lineData = [
   [
@@ -142,17 +120,95 @@ const LineGraph = ({ data }) => (
 
 const CustomTickLabel = (props) => {
   return (
-    <Text {...props} style={[props.style, { transform: [{ rotate: '-45deg' }] }]} /> // Apply rotation style
+    <Text {...props} style={[props.style, { transform: [{ rotate: '-45deg' }] }]} />
   );
 };
 
-const renderItem = ({ item }) => (
-  <View style={styles.item}>
-    <Text style={styles.bias}>{item.id}. {item.bias}</Text>
-  </View>
-);
+
+const RenderStrengthWeakness = ({data}) => {
+  let index = 1;
+  return(
+    <View style={styles.sw}>
+      {data.map((item) => (
+        <View style={styles.item}>
+        <Text style={styles.bias}>{index++}. {item.biasName}</Text>
+      </View>
+      ))}
+    </View>
+  )
+}
 
 const UserProfile = () => {
+  const [currentBiasData, setCurrentBiasData] = useState([]);
+  const [userStrengths, setUserStrengths] = useState([]);
+  const [userWeakness, setUserWeakness] = useState([]);
+
+  useEffect (() => {
+    getCurrentBiasData("U0001");
+    getUserStrength("U0001");
+    getUserWeakness("U0001");
+  }, [])
+
+  const getCurrentBiasData = async (userId) => {
+    try{
+      const response = await axios.get(`http://192.168.0.104:3000/userbiasprofile?userId=${userId}`);
+      console.log(response.data)
+      if (response.data) {
+        const resources = response.data;
+        const extractedObjects = resources.map((resource) => {
+          return {
+            userId: resource.userId,
+            biasName: resource.biasName,
+            score: resource.score
+          }
+        });
+        setCurrentBiasData(extractedObjects);
+      } else {
+        console.log("No resources found in the response");
+      }
+    } catch (error) {
+      console.error("Error fetching Current User Bias Data", error);
+    }
+  }
+
+  const getUserStrength = async (userId) => {
+    try{
+      const response = await axios.get(`http://192.168.0.104:3000/userStrengths?userId=${userId}`);
+      if (response.data) {
+        const resources = response.data.resources;
+        const extractedObjects = resources.map((resource) => {
+          return {
+            biasName: resource.biasName,
+          }
+        });
+        setUserStrengths(extractedObjects);
+      } else {
+        console.log("No resources found in the response");
+      }
+    } catch (error) {
+      console.error("Error fetching User Strength", error);
+    }
+  }
+
+  const getUserWeakness = async (userId) => {
+    try{
+      const response = await axios.get(`http://192.168.0.104:3000/userWeakness?userId=${userId}`);
+      if (response.data) {
+        const resources = response.data.resources;
+        const extractedObjects = resources.map((resource) => {
+          return {
+            biasName: resource.biasName,
+          }
+        });
+        setUserWeakness(extractedObjects);
+      } else {
+        console.log("No resources found in the response");
+      } 
+    } catch (error) {
+      console.error("Error fetching User Weakness", error);
+    }
+  }
+
   const renderLineItem = ({ item }) => (
     <View>
       <Text style={styles.customText}>Custom Text</Text>
@@ -162,6 +218,7 @@ const UserProfile = () => {
   const sliderWidth = Dimensions.get('window').width;
   const user_name="Julie Adams";
   const occupation = "Product Manager, ABC Corporation";
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Text style={styles.Heading1}>Profile</Text>
@@ -177,26 +234,19 @@ const UserProfile = () => {
         </View>
       </View> 
 
+      {/* Bias Score Section */}
       <View style={styles.cumulativeBiasScoreContainer}>
           <Text style={styles.Heading2}>Bias Score</Text>
           <Text style={styles.description}>The following graph shows the biases detected from your assessments and are out of a total scale of 1-10</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {/* <BarChart
-            style={styles.graphStyle}
-            data={barData}
-            width={Dimensions.get('window').width} // Adjust the width as needed
-            height={250}
-            chartConfig={chartConfig}
-            verticalLabelRotation={-45}
-          /> */}
           <VictoryChart>
           <VictoryAxis label="Bias"></VictoryAxis>
           <VictoryAxis dependentAxis label="Bias Score" style={styles.axis}></VictoryAxis>
           <VictoryBar 
             theme={VictoryTheme.material}  
-            data={userBiasData} 
-            x="bias" 
-            y="biasScore" 
+            data={currentBiasData} 
+            x="biasName" 
+            y="score" 
             style={styles.barChart}
             barWidth={30}
             animate
@@ -207,28 +257,21 @@ const UserProfile = () => {
         </ScrollView>
       </View>     
 
+      {/* Strengths */}
       <View style={styles.swContainer}>
         <Text style={styles.Heading2}>Strengths</Text>
         <Text style={styles.description}>Based on your assessments, you have demonstrated strength in identifying the following types of biases:</Text>
-        <FlatList
-          data={userStrengthData}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          style={styles.strengthsList}
-        />
+        <RenderStrengthWeakness data={userStrengths}/>
       </View>
 
+       {/* Weakness */}
       <View style={styles.swContainer}>
         <Text style={styles.Heading2}>Weakness</Text>
         <Text style={styles.description}>Based on your assessments, you have demonstrated weakness in identifying the following types of biases:</Text>
-        <FlatList
-          data={userWeaknessData}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          style={styles.strengthsList}
-        />
+        <RenderStrengthWeakness data={userWeakness}/>
       </View>
 
+      {/* Bias Score Progress */}
       <View style={styles.biasProgressContainer}>
         <Text style={styles.Heading2}>Bias Score Progress</Text>
         <View style={styles.lineGraphcontainer}>
@@ -340,5 +383,19 @@ const styles = StyleSheet.create({
   },
   biasProgressContainer: {
     marginBottom: 60,
+    marginTop: 20
   },
+  sw: {
+    marginTop: 15
+  },
+  bias: {
+    fontFamily: FONT.Oxygen_Bold
+  },
+  item: {
+    marginTop: 5
+  },
+  customText: {
+    marginTop: 10,
+    fontFamily: FONT.Oxygen
+  }
 })

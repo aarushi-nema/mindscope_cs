@@ -57,7 +57,7 @@ const Signup = (props) => {
         return;
       } 
       else {
-        fetch(`http://${IP}:3000/signup`, {
+        fetch(`http://10.91.50.99:3000/verify`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -65,11 +65,14 @@ const Signup = (props) => {
           body: JSON.stringify(fdata)
         }).then(res=>res.json()).then(
           data=>{
-            // console.log(data);
-            if(data.error) {
-              setErrormsg(data.error);
-            }
-            else{
+            //console.log(data);
+            if(data.error == 'Invalid Credentials') {
+              setErrormsg("Invalid Credentials");
+            } else if (data.message == "Verification code sent to your Email") {
+              console.log(data)
+              alert(data.message);
+              props.navigation.navigate('Verification', {userdata: data})
+            } else {
               alert('Account Created Successfully')
               props.navigation.navigate("Login")
             }

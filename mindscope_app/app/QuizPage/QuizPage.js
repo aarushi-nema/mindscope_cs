@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, FlatList, Dimensions } from 'react-native'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import { COLORS, FONT } from '../../constants/theme';
+import axios from "axios";
 
 //Components
 import TransparentButton from '../../components/TransparentButton';
@@ -9,6 +10,38 @@ import QuestionItem from '../../components/QuestionItem';
 
 const QuizPage = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [quizObject, setQuizObject] = useState([]);
+
+    useEffect(() => {
+        getQuestions();
+    }, [])
+
+    const getQuestions = async () => {
+        try {
+            const response = await axios.get("http://192.168.0.102:3000/quiz?quizId=Q0001");
+            console.log(response.data)
+            if (response.data) {
+                const resources = response.data;
+                const extractedObjects = resources.map((resource) => {
+                  return {
+                    _id: resource._id,
+                    quizId: resource.quizId,
+                    quizName: resource.quizName,
+                    description: resource.description,
+                    category: resource.category,
+                    type: resource.type,
+                    numViews: resource.numViews,
+                    img: resource.img,
+                    questions: resource.questions,
+                  }
+                });
+                setQuizObject(extractedObjects);
+            }
+        } catch (error) {
+            console.error("Error fetching questions:", error)
+        }
+    }
+
   return (
     <View style={styles.container}>
         <View style={styles.topButtonFlex}>
@@ -20,7 +53,7 @@ const QuizPage = () => {
             <Text style={styles.questionCount}>Question: {' ' + (currentIndex+1) +  '/' + ProfileCreationQuestions.length}</Text>
         </View>
         <View>
-            <FlatList showsHorizontalScrollIndicator={false} horizontal data={ProfileCreationQuestions} renderItem={({item,index})=>{
+            <FlatList showsHorizontalScrollIndicator={false} horizontal data={quizObject.questions} renderItem={({item,index})=>{
                 return (
                     <QuestionItem data={item}/>
                 )

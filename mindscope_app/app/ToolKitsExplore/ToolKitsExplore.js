@@ -1,14 +1,10 @@
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native'
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { COLORS, FONT, SIZES, SHADOWS } from '../../constants/theme'
+import axios from "axios";
 
 //icons
 import search from '../../assets/icons/search.png'
-
-//Images
-import biasImg2 from '../../assets/images/bias_image2.jpg';
-import biasImg3 from '../../assets/images/bias_image3.png';
-import biasImg4 from '../../assets/images/bias_image4.jpg';
 
 //Components
 import ExploreButton from '../../components/ExploreButton'
@@ -18,7 +14,12 @@ const CardSet = ({ data }) => {
   return (
     <ScrollView horizontal>
       {data.map((item, index) => (
-        <HomeToolkitCard title={item.title} description={item.description} imageUrl={item.image} />
+        <HomeToolkitCard
+          title={item.quizName}
+          description={item.description}
+          imageUrl={item.img}
+          buttonText="Open Quiz"
+        />
       ))}
     </ScrollView>
   );
@@ -36,15 +37,51 @@ const CategoryCard = ({data}) => {
   )
 };
 
-const ToolKitsExplore = () => {
-  const toolkitTitles= ['Bias Bash', 'Pink or Blue?', 'Follow the flock']
-  const toolkitDescriptions= ['Challenge your biases by identifying and questioning your assumptions about...','Think beyond traditional gender stereotypes and biases, and explore the...','Question your tendency to conform to social norms and encourages...']
-  const toolkitImages= [biasImg2, biasImg3, biasImg4]
-  const toolkitCards = toolkitTitles.map((title, index) => ({
-    title,
-    description: toolkitDescriptions[index],
-    image: toolkitImages[index],
-  }));
+const ToolKitsExplore = ({navigation}) => {
+  const [toolkitData, setToolkitData] = useState([]);
+  const [biasNames, setBiasNames] = useState([]);
+
+  useEffect(() => {
+    getPopularToolkits(); // Fetch the data when the component mounts
+  }, []);
+
+  const getPopularToolkits = async () => {
+    try {
+      const response = await axios.get(
+        "http://192.168.0.104:3000/popular_toolkits"
+      );
+      const resources = response.data.resources; // Get the resources array
+      const extractedObjects = resources.map((resource) => ({
+        quizId: resource.quizId,
+        quizName: resource.quizName,
+        description: resource.description,
+        category: resource.category,
+        type: resource.type,
+        numViews: resource.numViews,
+        img: resource.img,
+      }));
+      setToolkitData(extractedObjects); // Update the state with the extracted objects
+    } catch (error) {
+      console.error("Error fetching popular toolkits:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://192.168.0.104:3000/biases');
+        const data = response.data;
+  
+        const names = data.resources.map(resource => resource.biasName);
+  
+        setBiasNames(names);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+    
+  }, []);
   const categories = ['Gender Bias', 'Halo Effect', 'Ageism Bias', 'Beauty Bias', 'Horns Effect']
   return (
     <ScrollView style={styles.container}>
@@ -67,26 +104,27 @@ const ToolKitsExplore = () => {
         </TouchableOpacity>
       </View>
 
+      {/* Categories */}
+      <ScrollView horizontal contentContainerStyle={styles.biasNameContainer}>
+        {biasNames.map((name, index) => (
+          <Text key={index} style={styles.biasNameItem}>{name}</Text>
+        ))}
+      </ScrollView>
+
       {/* Popular ToolKits */}
-       <View style={styles.toolkitsContainer}>
+      <View style={styles.toolkitsContainer}>
         <View style={styles.learningHeader}>
           <Text style={styles.Heading2}>Popular ToolKits</Text>
           <View style={styles.exploreButtonConatiner}>
-            <ExploreButton text="View More"></ExploreButton>
+            <ExploreButton
+              text="Explore"
+              handlePress={() => navigation.navigate("ToolKitExplore")}
+            ></ExploreButton>
           </View>
         </View>
-
-        {/* <HomeToolkitCard imageUrl={biasImg2} title="Bias Bash" description="Challenge your biases by identifying and questioning your assumptions about..."></HomeToolkitCard> */}
-        <CardSet data={toolkitCards} />
-     </View>
-
-     {/* Explore Categories */}
-     <View>
-      <Text style={styles.Heading2}>Explore</Text>
-      <View style={styles.categoryCard}>
-        <CategoryCard data={categories}></CategoryCard>
+        <CardSet data={toolkitData} navigation={navigation} />
       </View>
-     </View>
+
 
      {/* For You ToolKits */}
        <View style={styles.toolkitsContainer}>
@@ -98,7 +136,7 @@ const ToolKitsExplore = () => {
         </View>
 
         {/* <HomeToolkitCard imageUrl={biasImg2} title="Bias Bash" description="Challenge your biases by identifying and questioning your assumptions about..."></HomeToolkitCard> */}
-        <CardSet data={toolkitCards} />
+        {/* <CardSet data={toolkitCards} /> */}
      </View>
     </ScrollView>
   )
@@ -159,7 +197,7 @@ const styles = StyleSheet.create({
     tintColor: COLORS.white,
   },
   toolkitsContainer: {
-    marginTop: 20,
+    marginTop: 15
   },
   learningHeader: {
     flexDirection: 'row',
@@ -184,5 +222,18 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     marginTop: 16
+  },
+  biasNameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  biasNameItem: {
+    padding: 5,
+    marginRight: 10, 
+    fontFamily: FONT.Oxygen,
+    borderRadius: 10, // Add border radius
+    borderWidth: 2, // Add border width if desired
+    borderColor: COLORS.grey, // Add border color if desired
   }
 })

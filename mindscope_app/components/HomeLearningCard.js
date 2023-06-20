@@ -9,8 +9,8 @@ const HomeLearningCard = (props) => {
         <Text style={styles.category}>{props.type}</Text>
         <Text style={styles.title}>{props.title}</Text>
         <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate("Article Page")}>
-                <Text style={styles.buttonText}>Read Now</Text>
+            <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate(props.navigateTo, { data: props.contentObject })}>
+                <Text style={styles.buttonText}>{props.btnText}</Text>
             </TouchableOpacity> 
         </View>
       </ImageBackground>
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   buttonContainer: {
-    width: '32%',
+    width: '35%',
     ...SHADOWS.small,
   },
   button: {

@@ -131,12 +131,36 @@ const ArticlesExplore = ({props, navigation}) => {
       });
       //const searchedArticles = response.data;
       // Process the searchedArticles data as needed
-      setSearchedArticles(response.data)
+      const resources = response.data;
+      const extractedObjects = resources.map((resource) => {
+        const datePublished = new Date(resource.datePublished);
+        return {
+          contentId: resource.contentId,
+          title: resource.title,
+          author: resource.author,
+          category: resource.category,
+          content: resource.content,
+          datePublished: datePublished.toLocaleDateString('en-US', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          }),
+          numViews: resource.numViews,
+          type: resource.type,
+          imageUrl: resource.imageUrl,
+        };
+      });
+      setSearchedArticles(extractedObjects)
       console.log(searchedArticles);
     } catch (error) {
       console.error("Error searching articles:", error);
     }
   };
+
+  const searchType = async(searchedTerm) => {
+    setSearchTerm(searchedTerm)
+    handleSearch()
+  }
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -160,59 +184,67 @@ const ArticlesExplore = ({props, navigation}) => {
         </TouchableOpacity>
       </View>
 
-      {/* Popular */}
-      <View style={styles.popularContainer}>
-        <Text style={styles.Heading2}>Popular</Text>
-        <Carousel
-          layout="default"
-          data={popularArticles}
-          renderItem={({ item }) => (
-            <View style={styles.item}>
-              <HomeLearningCard
-                image={item.imageUrl}
-                title={item.title}
-                type={item.type}
-                navigation={navigation}
-                btnText="Read Now"
-                contentObject={item}
-                navigateTo={"Article Page"}
-              ></HomeLearningCard>
-            </View>
-          )}
-          sliderWidth={370} 
-          itemWidth={500}
-          onSnapToItem={(index) => setIndex(index)}
-          useScrollView={true}
-        />
-        <Pagination
-          dotsLength={popularArticles.length}
-          activeDotIndex={index}
-          carouselRef={isCarousel}
-          dotStyle={{
-            width: 8,
-            height: 8,
-            borderRadius: 5,
-            marginHorizontal: 0,
-            marginTop: -7,
-            backgroundColor: "rgba(0, 0, 0, 0.92)",
-          }}
-          inactiveDotOpacity={0.4}
-          inactiveDotScale={0.6}
-          tappableDots={true}
-        />
-      </View>
-
-      {/* Recommended */}
-      <View>
-        <Text style={styles.Heading2}>Articles for you</Text>
-        <CardSet data={toolkitCards} />
-      </View>
-
-       {/* Latest */}
-       <View>
+      {searchTerm.length > 0 ? ( <View>
         <Text style={styles.Heading2}>Latest</Text>
-        <LatestCardSet data={latestArticles} navigation={navigation}></LatestCardSet>
-      </View>
+        <LatestCardSet data={searchedArticles} navigation={navigation}></LatestCardSet>
+      </View>) : (
+      
+      // Popular 
+      <View>
+      <View style={styles.popularContainer}>
+      <Text style={styles.Heading2}>Popular</Text>
+      <Carousel
+        layout="default"
+        data={popularArticles}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <HomeLearningCard
+              image={item.imageUrl}
+              title={item.title}
+              type={item.type}
+              navigation={navigation}
+              btnText="Read Now"
+              contentObject={item}
+              navigateTo={"Article Page"}
+            ></HomeLearningCard>
+          </View>
+        )}
+        sliderWidth={370} 
+        itemWidth={500}
+        onSnapToItem={(index) => setIndex(index)}
+        useScrollView={true}
+      />
+      <Pagination
+        dotsLength={popularArticles.length}
+        activeDotIndex={index}
+        carouselRef={isCarousel}
+        dotStyle={{
+          width: 8,
+          height: 8,
+          borderRadius: 5,
+          marginHorizontal: 0,
+          marginTop: -7,
+          backgroundColor: "rgba(0, 0, 0, 0.92)",
+        }}
+        inactiveDotOpacity={0.4}
+        inactiveDotScale={0.6}
+        tappableDots={true}
+      />
+    </View>
+
+    {/* //Recommended */}
+    <View>
+      <Text style={styles.Heading2}>Articles for you</Text>
+      <CardSet data={toolkitCards} />
+    </View>
+
+     {/* //Latest */}
+     <View>
+      <Text style={styles.Heading2}>Latest</Text>
+      <LatestCardSet data={latestArticles} navigation={navigation}></LatestCardSet>
+    </View>
+    </View>
+      )}
     </ScrollView>
   );
 };

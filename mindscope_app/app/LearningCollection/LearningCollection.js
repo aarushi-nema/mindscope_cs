@@ -8,8 +8,26 @@ import search from "../../assets/icons/search.png";
 
 //Images
 import article from "../../assets/images/article.jpg";
+import video from "../../assets/images/video.jpg";
+import casestudy from "../../assets/images/case_study.png";
 
-const LearningCollection = () => {
+const CategoryCard = ({img, title, handlePress}) => {
+  return(
+    <View style={styles.collectionContainer}>
+      <TouchableOpacity style={styles.btnContainer} onPress={handlePress}>
+      <ImageBackground
+        source={img}
+        style={styles.btnImg}>
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>{title}</Text>
+        </View>
+      </ImageBackground>
+    </TouchableOpacity>
+    </View>
+    
+)}
+
+const LearningCollection = ({ props, navigation }) => {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
     {/* Search */}
@@ -32,16 +50,9 @@ const LearningCollection = () => {
     </View>
 
     <Text style={styles.Heading2}>Start Learning</Text>
-
-    <TouchableOpacity style={styles.btnContainer}>
-      <ImageBackground
-        source={article}
-        style={styles.btnImg}>
-        <View style={styles.textContainer}>
-          <Text style={styles.text}>Articles</Text>
-        </View>
-      </ImageBackground>
-    </TouchableOpacity>
+    <CategoryCard img={article} title="Articles" handlePress={() => navigation.navigate("Article Explore")}></CategoryCard>
+    <CategoryCard img={video} title="Videos" handlePress={() => navigation.navigate("Video Explore")}></CategoryCard>
+    <CategoryCard img={casestudy} title="Case Studies"></CategoryCard>
     </ScrollView>
   )
 }
@@ -106,7 +117,8 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: COLORS.white,
     marginTop: 20,
-    borderRadius: 10
+    borderRadius: 10,
+    marginBottom: 10
   },
   btnImg: {
     width: '100%',
@@ -133,4 +145,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     height: '100%'
   },
+  collectionContainer: {
+    marginBottom: 20,
+  }
 })

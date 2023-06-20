@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, ScrollView, FlatList, TextInput } from 'react-n
 import React from 'react'
 import { COLORS, FONT, SHADOWS } from '../../constants/theme'
 import OrangeButton from '../../components/OrangeButton'
+import moment from 'moment';
 
 const data = [
     { id: '1', prompt: 'Write about a time when you realized you had a bias and how you worked to address it.' },
@@ -17,12 +18,12 @@ const ListItem = ({ item }) => {
   };
 
 const Journal = (props) => {
-    const date = "15 January 2023"
+    const currentDate = moment().format('DD MMM YYYY');
   return (
     <ScrollView style={styles.container}>
         <View style={styles.container1}>
             <Text style={styles.Heading1}>Journal</Text>
-            <Text style={styles.Heading2}>{date}</Text>
+            <Text style={styles.Heading2}>{currentDate}</Text>
             <Text style={styles.prompt}>Some helpful prompts: </Text>
             <FlatList
             data={data}
@@ -35,8 +36,6 @@ const Journal = (props) => {
       <View style={styles.container2}>
         <TextInput 
             placeholder='Enter your journal here...' 
-            //value={email} 
-            //   onChangeText={(text) => setFdata({...fdata, email:text})}  
             style={styles.input}
             multiline={true}
         />

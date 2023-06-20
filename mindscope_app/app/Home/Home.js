@@ -44,7 +44,7 @@ const Home = ({ props, navigation }) => {
   const getLatestArticles = async () => {
     try {
       const response = await axios.get(
-        "http://192.168.0.105:3000/latest_content"
+        "http://192.168.0.104:3000/latest_content"
       );
       const resources = response.data.resources; // Get the resources array
       const extractedObjects = resources.map((resource) => ({
@@ -73,7 +73,7 @@ const Home = ({ props, navigation }) => {
   const getPopularToolkits = async () => {
     try {
       const response = await axios.get(
-        "http://192.168.0.105:3000/popular_toolkits"
+        "http://192.168.0.104:3000/popular_toolkits"
       );
       const resources = response.data.resources; // Get the resources array
       const extractedObjects = resources.map((resource) => ({
@@ -100,7 +100,7 @@ const Home = ({ props, navigation }) => {
         <View style={styles.buttonContainer}>
           <NotificationButton
             text="Complete your daily journal"
-            handlePress={() => props.navigation.navigate("Journal")}
+            handlePress={() => navigation.navigate("Journal")}
           ></NotificationButton>
         </View>
         <View style={styles.buttonContainer}>
@@ -115,7 +115,7 @@ const Home = ({ props, navigation }) => {
             <ExploreButton
               text="Explore"
               handlePress={() =>
-                props.navigation.navigate("Learning Collection")
+                navigation.navigate("Learning Collection")
               }
             ></ExploreButton>
           </View>
@@ -132,6 +132,7 @@ const Home = ({ props, navigation }) => {
                   title={item.title}
                   type={item.type}
                   navigation={navigation}
+                  btnText="Read Now"
                 ></HomeLearningCard>
               </View>
             )}
@@ -157,8 +158,6 @@ const Home = ({ props, navigation }) => {
             tappableDots={true}
           />
         </View>
-
-        {/* <HomeLearningCard image={biasImg1} title="Unconscious Bias: When Good Intentions Aren't Enough"></HomeLearningCard> */}
       </View>
 
       <View style={styles.toolkitsContainer}>
@@ -167,16 +166,13 @@ const Home = ({ props, navigation }) => {
           <View style={styles.exploreButtonConatiner}>
             <ExploreButton
               text="Explore"
-              handlePress={() => props.navigation.navigate("ToolKitExplore")}
+              handlePress={() => navigation.navigate("ToolKitExplore")}
             ></ExploreButton>
           </View>
         </View>
-
-        {/* <HomeToolkitCard imageUrl={biasImg2} title="Bias Bash" description="Challenge your biases by identifying and questioning your assumptions about..."></HomeToolkitCard> */}
         <CardSet data={toolkitData} navigation={navigation} />
       </View>
-      {/* <Text>This is the home screen</Text>
-      <TouchableOpacity style={styles.logOutButton} onPress={()=>{props.navigation.navigate('Login')}}><Text>Logout</Text></TouchableOpacity> */}
+  
     </ScrollView>
   );
 };
